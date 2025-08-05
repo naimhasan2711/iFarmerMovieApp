@@ -9,42 +9,40 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.nakibul.ifarmermovieapp.NetworkUtils
 import com.nakibul.ifarmermovieapp.R
+import com.nakibul.ifarmermovieapp.navigation.Screen
 import com.nakibul.ifarmermovieapp.presentation.splash.viewmodel.MoviesViewModel
-import kotlin.collections.getValue
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    viewModel: MoviesViewModel = hiltViewModel()
+    navController: NavController, viewModel: MoviesViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.state.collectAsState()
     var startAnimation by remember { mutableStateOf(false) }
 
@@ -53,6 +51,17 @@ fun SplashScreen(
         startAnimation = true
     }
 
+    LaunchedEffect(Unit) @androidx.annotation.RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE) {
+        // Check if data has been fetched before and if internet is available
+        if (NetworkUtils.isInternetAvailable(context)) {
+            viewModel.fetchMovies()
+        }
+        // Wait for 5 seconds before navigating
+        delay(5000)
+        navController.navigate(Screen.Home.route) {
+            popUpTo(Screen.Splash.route) { inclusive = true }
+        }
+    }
 
     val alphaAnimation by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
@@ -65,8 +74,7 @@ fun SplashScreen(
             .fillMaxSize()
             .background(
                 color = MaterialTheme.colorScheme.primary
-            ),
-        contentAlignment = Alignment.Center
+            ), contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,8 +113,7 @@ fun SplashScreen(
             when {
                 uiState.isLoading -> {
                     CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(48.dp)
+                        color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(48.dp)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -118,7 +125,7 @@ fun SplashScreen(
                     )
                 }
 
-                true -> {
+                uiState.errorMessage.isNotEmpty() -> {
                     Text(
                         text = uiState.errorMessage,
                         style = MaterialTheme.typography.bodyMedium,
@@ -128,7 +135,6 @@ fun SplashScreen(
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
-
                 }
             }
         }

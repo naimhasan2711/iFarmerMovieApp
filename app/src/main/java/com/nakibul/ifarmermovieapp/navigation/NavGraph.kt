@@ -18,7 +18,7 @@ fun SetUpNavGraph(
         composable(
             route = Screen.Splash.route
         ) {
-            SplashScreen()
+            SplashScreen(navController = navController)
         }
 
         composable(
