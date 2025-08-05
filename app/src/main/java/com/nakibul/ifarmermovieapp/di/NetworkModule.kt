@@ -1,7 +1,11 @@
 package com.nakibul.ifarmermovieapp.di
 
 import android.content.Context
+import com.nakibul.ifarmermovieapp.data.datasource.MovieDataSource
+import com.nakibul.ifarmermovieapp.data.datasourceImpl.MovieDataSourceImpl
 import com.nakibul.ifarmermovieapp.data.remote.MovieApiService
+import com.nakibul.ifarmermovieapp.domain.repository.MovieRepository
+import com.nakibul.ifarmermovieapp.domain.repository.MovieRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,7 +64,7 @@ class NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://your-api-base-url.com/")
+            .baseUrl("https://raw.githubusercontent.com/erik-sytnyk/movies-list/master/")
             .client(okHttpClient) // Attach OkHttpClient
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -68,8 +72,20 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNewsApiService(retrofit: Retrofit): MovieApiService{
+    fun provideMoviesApiService(retrofit: Retrofit): MovieApiService {
         return retrofit.create(MovieApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesMoviesRepository(movieDataSource: MovieDataSource): MovieRepository {
+        return MovieRepositoryImpl(movieDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMoviesDataSource(moviesApiService: MovieApiService): MovieDataSource {
+        return MovieDataSourceImpl(moviesApiService)
     }
 
 }
