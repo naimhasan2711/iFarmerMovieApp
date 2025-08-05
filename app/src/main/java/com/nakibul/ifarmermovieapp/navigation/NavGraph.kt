@@ -21,16 +21,24 @@ fun SetUpNavGraph(
             SplashScreen(navController = navController)
         }
 
-        composable(
-            route = Screen.Home.route
-        ) {
-            HomeScreen()
+
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigateToDetails = { movieId ->
+                    navController.navigate(Screen.Details.route)
+                },
+                onNavigateToWishlist = {
+                    navController.navigate(Screen.Wishlist.route)
+                }
+            )
         }
 
         composable(
-            route = Screen.Details.route
-        ) {
-            DetailsScreen()
+            route = Screen.Details.route,
+        ) { backStackEntry ->
+            val movieId = backStackEntry.arguments?.getInt("movieId") ?: return@composable
+            DetailsScreen(
+            )
         }
 
         composable(
