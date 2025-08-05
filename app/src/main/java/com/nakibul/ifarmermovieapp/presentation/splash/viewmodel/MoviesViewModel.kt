@@ -2,7 +2,7 @@ package com.nakibul.ifarmermovieapp.presentation.splash.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nakibul.ifarmermovieapp.domain.models.MovieResponse
+import com.nakibul.ifarmermovieapp.domain.models.remote.MovieResponse
 import com.nakibul.ifarmermovieapp.domain.use_case.MoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

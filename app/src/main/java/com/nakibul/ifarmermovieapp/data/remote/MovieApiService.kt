@@ -1,6 +1,6 @@
 package com.nakibul.ifarmermovieapp.data.remote
 
-import com.nakibul.ifarmermovieapp.domain.models.MovieResponse
+import com.nakibul.ifarmermovieapp.domain.models.remote.MovieResponse
 import retrofit2.http.GET
 
 interface MovieApiService {

@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.domain.models
+package com.nakibul.ifarmermovieapp.domain.models.remote
 
 data class MovieResponse(
     val genres: List<String>,
