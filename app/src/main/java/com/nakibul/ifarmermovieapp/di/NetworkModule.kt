@@ -3,7 +3,10 @@ package com.nakibul.ifarmermovieapp.di
 import android.content.Context
 import com.nakibul.ifarmermovieapp.data.datasource.MovieDataSource
 import com.nakibul.ifarmermovieapp.data.datasourceImpl.MovieDataSourceImpl
+import com.nakibul.ifarmermovieapp.data.local.GenreDao
+import com.nakibul.ifarmermovieapp.data.local.MovieDao
 import com.nakibul.ifarmermovieapp.data.remote.MovieApiService
+import com.nakibul.ifarmermovieapp.domain.models.local.Genre
 import com.nakibul.ifarmermovieapp.domain.repository.MovieRepository
 import com.nakibul.ifarmermovieapp.domain.repository.MovieRepositoryImpl
 import dagger.Module
@@ -78,8 +81,12 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun providesMoviesRepository(movieDataSource: MovieDataSource): MovieRepository {
-        return MovieRepositoryImpl(movieDataSource)
+    fun providesMoviesRepository(
+        movieDataSource: MovieDataSource,
+        movieDao: MovieDao,
+        genreDao: GenreDao
+    ): MovieRepository {
+        return MovieRepositoryImpl(movieDataSource, movieDao, genreDao)
     }
 
     @Singleton

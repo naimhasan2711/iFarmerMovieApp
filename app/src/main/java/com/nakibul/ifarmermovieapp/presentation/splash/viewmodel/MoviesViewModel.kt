@@ -2,6 +2,11 @@ package com.nakibul.ifarmermovieapp.presentation.splash.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nakibul.ifarmermovieapp.data.local.GenreDao
+import com.nakibul.ifarmermovieapp.data.local.MovieDao
+import com.nakibul.ifarmermovieapp.data.local.toDomain
+import com.nakibul.ifarmermovieapp.domain.models.local.Genre
+import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
 import com.nakibul.ifarmermovieapp.domain.models.remote.MovieResponse
 import com.nakibul.ifarmermovieapp.domain.use_case.MoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,10 +18,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MoviesViewModel @Inject constructor(private val moviesUseCase: MoviesUseCase) : ViewModel() {
+class MoviesViewModel @Inject constructor(
+    private val moviesUseCase: MoviesUseCase,
+    private val movieDao: MovieDao,
+    private val genreDao: GenreDao
+) : ViewModel() {
 
     private val _state = MutableStateFlow(MoviesState())
     val state: StateFlow<MoviesState> = _state.asStateFlow()
+
+    private val _searchResults = MutableStateFlow<List<Movie>>(emptyList())
+    val searchResults: StateFlow<List<Movie>> = _searchResults.asStateFlow()
 
     init {
         fetchMovies()
@@ -26,16 +38,55 @@ class MoviesViewModel @Inject constructor(private val moviesUseCase: MoviesUseCa
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _state.value = _state.value.copy(isLoading = true)
-                val response = moviesUseCase.fetchMovieList()
-                _state.value = _state.value.copy(
-                    moviesResponse = response,
-                    isLoading = false,
-                    errorMessage = ""
-                )
+                val cached = movieDao.getAllMovies()
+                if (cached.isEmpty()) {
+                    val remote = moviesUseCase.fetchMovieList()
+                    _state.value = _state.value.copy(
+                        moviesResponse = remote,
+                        isLoading = false,
+                        errorMessage = "",
+                        movieList = remote.movies,
+                        genreList = remote.genres
+                    )
+                } else {
+                    val movies = cached.map { it.toDomain() }
+                    _state.value = _state.value.copy(
+                        moviesResponse = MovieResponse(
+                            movies.flatMap { it.genres }.distinct(),
+                            movies
+                        ),
+                        isLoading = false,
+                        errorMessage = "",
+                        movieList = movies,
+                        genreList = movies.flatMap { it.genres }.distinct(),
+                        genreList2 = genreDao.getAllGenres()
+                    )
+                }
             } catch (e: Exception) {
                 _state.value = _state.value.copy(
                     isLoading = false,
-                    errorMessage = e.message ?: "An unexpected error occurred"
+                    errorMessage = e.message ?: "Unknown error"
+                )
+            }
+        }
+    }
+
+    fun searchMovies(query: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _searchResults.value = moviesUseCase.searchMovies(query)
+        }
+    }
+
+    fun getAllGenres() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val genres = moviesUseCase.getAllGenres()
+                _state.value = _state.value.copy(
+                    genreList2 = genres
+                )
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(
+                    errorMessage = e.message ?: "Failed to fetch genres"
                 )
             }
         }
@@ -45,5 +96,8 @@ class MoviesViewModel @Inject constructor(private val moviesUseCase: MoviesUseCa
 data class MoviesState(
     val isLoading: Boolean = false,
     val moviesResponse: MovieResponse? = null,
-    val errorMessage: String = ""
+    val errorMessage: String = "",
+    val movieList: List<Movie> = emptyList(),
+    val genreList: List<String> = emptyList(),
+    val genreList2: List<Genre> = emptyList()
 )
