@@ -7,5 +7,5 @@ class MoviesUseCase @Inject constructor(private val movieRepository: MovieReposi
     suspend fun fetchMovieList() = movieRepository.fetMovieResponse()
     suspend fun searchMovies(query: String) = movieRepository.searchMovies(query)
     suspend fun getAllGenres() = movieRepository.getAllGenres()
+    suspend fun getMoviesPaged(limit: Int, offset: Int) = movieRepository.getMoviesPaged(limit, offset)
 }
-

@@ -142,7 +142,7 @@ fun MovieCard(
                     Text(
                         text = "Actors: ${movie.actors}",
                         style = MaterialTheme.typography.bodySmall,
-                        maxLines = 3,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant

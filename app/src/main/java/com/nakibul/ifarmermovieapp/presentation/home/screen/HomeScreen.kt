@@ -1,5 +1,6 @@
 package com.nakibul.ifarmermovieapp.presentation.home.screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -67,6 +68,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.state.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
+    val pagedMovies by viewModel.pagedMovies.collectAsState()
+    val isLoadingMore by viewModel.isLoadingMore.collectAsState()
     val listState = rememberLazyListState()
 
     var searchQuery by remember { mutableStateOf("") }
@@ -82,7 +85,7 @@ fun HomeScreen(
     val movieList = if (searchQuery.isNotBlank()) {
         searchResults
     } else {
-        uiState.movieList.let { movies ->
+        pagedMovies.let { movies ->
             if (selectedGenre != null) {
                 movies.filter { movie ->
                     movie.genres.contains(selectedGenre) == true
@@ -159,7 +162,7 @@ fun HomeScreen(
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
+            Spacer(modifier = Modifier.height(16.dp))
             // Movies List
             Box(modifier = Modifier.fillMaxSize()) {
                 if (uiState.isLoading && uiState.movieList.isEmpty()) {
@@ -186,6 +189,7 @@ fun HomeScreen(
                                 .clickable {
                                     if (NetworkUtils.isInternetAvailable(context)) {
                                         viewModel.fetchMovies()
+                                        viewModel.getAllGenres()
                                     } else {
                                         Toast.makeText(
                                             context,
@@ -214,8 +218,8 @@ fun HomeScreen(
                             )
                         }
 
-                        // Loading more indicator
-                        if (uiState.isLoading && uiState.movieList.isNotEmpty()) {
+                        // Loading more indicator at the bottom
+                        if (isLoadingMore) {
                             item {
                                 Box(
                                     modifier = Modifier.fillMaxWidth(),
@@ -226,6 +230,20 @@ fun HomeScreen(
                                     )
                                 }
                             }
+                        }
+                    }
+
+                    // Trigger loading more when scrolled to the end
+                    LaunchedEffect(listState.firstVisibleItemIndex, movieList.size, isLoadingMore) {
+                        val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        if (
+                            lastVisible != null &&
+                            lastVisible >= movieList.size - 3 &&
+                            searchQuery.isBlank() &&
+                            !isLoadingMore
+                        ) {
+                            Log.d("HomeScreen", "Loading more movies...")
+                            viewModel.loadMoreMovies()
                         }
                     }
                 }

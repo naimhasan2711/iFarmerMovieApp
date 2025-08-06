@@ -28,4 +28,7 @@ interface MovieDao {
         """
     )
     suspend fun searchMovies(query: String): List<MovieEntity>
+
+    @Query("SELECT * FROM movies ORDER BY year DESC LIMIT :limit OFFSET :offset")
+    suspend fun getMoviesPaged(limit: Int, offset: Int): List<MovieEntity>
 }

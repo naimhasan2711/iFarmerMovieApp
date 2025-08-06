@@ -30,8 +30,19 @@ class MoviesViewModel @Inject constructor(
     private val _searchResults = MutableStateFlow<List<Movie>>(emptyList())
     val searchResults: StateFlow<List<Movie>> = _searchResults.asStateFlow()
 
+    private val _pagedMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val pagedMovies: StateFlow<List<Movie>> = _pagedMovies.asStateFlow()
+    private var currentPage = 0
+    private val pageSize = 10
+    private var endReached = false
+
+    private val _isLoadingMore = MutableStateFlow(false)
+    val isLoadingMore = _isLoadingMore.asStateFlow()
+
     init {
         fetchMovies()
+        getAllGenres()
+        loadInitialMovies()
     }
 
     fun fetchMovies() {
@@ -94,6 +105,33 @@ class MoviesViewModel @Inject constructor(
                     errorMessage = e.message ?: "Failed to fetch genres"
                 )
             }
+        }
+    }
+
+    fun loadInitialMovies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value = _state.value.copy(isLoading = true)
+            currentPage = 0
+            endReached = false
+            val movies = moviesUseCase.getMoviesPaged(pageSize, 0)
+            _pagedMovies.value = movies
+            _state.value = _state.value.copy(isLoading = false)
+        }
+    }
+
+    fun loadMoreMovies() {
+        if (endReached || _isLoadingMore.value) return
+        viewModelScope.launch(Dispatchers.IO) {
+            _isLoadingMore.value = true
+            val nextOffset = (currentPage + 1) * pageSize
+            val movies = moviesUseCase.getMoviesPaged(pageSize, nextOffset)
+            if (movies.isEmpty()) {
+                endReached = true
+            } else {
+                _pagedMovies.value = _pagedMovies.value + movies
+                currentPage++
+            }
+            _isLoadingMore.value = false
         }
     }
 }

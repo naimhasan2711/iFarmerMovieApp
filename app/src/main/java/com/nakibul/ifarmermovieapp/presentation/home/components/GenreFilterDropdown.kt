@@ -3,6 +3,7 @@ package com.nakibul.ifarmermovieapp.presentation.home.components
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -33,7 +34,7 @@ fun GenreFilterDropdown(
     Box(modifier = modifier) {
         OutlinedButton(
             onClick = { isExpanded = true },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
             shape = RoundedCornerShape(10.dp)
         ) {
             Text(

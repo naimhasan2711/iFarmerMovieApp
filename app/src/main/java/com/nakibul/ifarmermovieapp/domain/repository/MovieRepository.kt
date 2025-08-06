@@ -8,5 +8,5 @@ interface MovieRepository {
     suspend fun fetMovieResponse(): MovieResponse
     suspend fun searchMovies(query: String): List<Movie>
     suspend fun getAllGenres(): List<Genre>
-
+    suspend fun getMoviesPaged(limit: Int, offset: Int): List<Movie>
 }

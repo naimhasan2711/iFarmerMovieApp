@@ -48,4 +48,8 @@ class MovieRepositoryImpl(
     override suspend fun getAllGenres(): List<Genre> {
         return genreDao.getAllGenres()
     }
+
+    override suspend fun getMoviesPaged(limit: Int, offset: Int): List<Movie> {
+        return movieDao.getMoviesPaged(limit, offset).map { it.toDomain() }
+    }
 }
