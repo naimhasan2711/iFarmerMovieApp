@@ -77,7 +77,7 @@ The app follows **Clean Architecture** principles with clear separation of conce
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/naimhasan2711/iFarmerMovieApp.git
 cd iFarmerMovieApp
 ```
 
