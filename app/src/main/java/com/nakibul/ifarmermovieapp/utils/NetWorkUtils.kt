@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp
+package com.nakibul.ifarmermovieapp.utils
 
 import android.Manifest
 import android.content.Context

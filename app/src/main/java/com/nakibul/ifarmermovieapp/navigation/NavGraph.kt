@@ -42,14 +42,18 @@ fun SetUpNavGraph(
         ) { backStackEntry ->
             val movieId = backStackEntry.arguments?.getInt("movieId") ?: -1
             DetailsScreen(movieId = movieId) {
-                navController.navigateUp()
+                navController.navigate(Screen.Home.route)
             }
         }
 
         composable(
             route = Screen.Wishlist.route
         ) {
-            WishListScreen()
+            WishListScreen(
+                onBackPressed = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

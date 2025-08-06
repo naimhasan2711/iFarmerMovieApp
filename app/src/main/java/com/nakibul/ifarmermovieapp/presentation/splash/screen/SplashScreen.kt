@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.nakibul.ifarmermovieapp.NetworkUtils
+import com.nakibul.ifarmermovieapp.utils.NetworkUtils
 import com.nakibul.ifarmermovieapp.R
 import com.nakibul.ifarmermovieapp.navigation.Screen
 import com.nakibul.ifarmermovieapp.presentation.splash.viewmodel.MoviesViewModel

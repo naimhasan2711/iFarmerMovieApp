@@ -8,6 +8,8 @@ import com.nakibul.ifarmermovieapp.data.local.MovieDao
 import com.nakibul.ifarmermovieapp.data.remote.MovieApiService
 import com.nakibul.ifarmermovieapp.domain.repository.MovieRepository
 import com.nakibul.ifarmermovieapp.domain.repository.MovieRepositoryImpl
+import com.nakibul.ifarmermovieapp.utils.Constant.BASE_URL
+import com.nakibul.ifarmermovieapp.utils.Constant.PACKAGE_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,9 +36,8 @@ class NetworkModule {
         }
 
         val headerInterceptor = Interceptor { chain ->
-            val packageName = "com.nakibul.ifarmermovieapp"
             val request = chain.request().newBuilder()
-                .addHeader("App-Package-Name", packageName)
+                .addHeader("App-Package-Name", PACKAGE_NAME)
                 .build()
             chain.proceed(request)
         }
@@ -66,7 +67,7 @@ class NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://raw.githubusercontent.com/erik-sytnyk/movies-list/master/")
+            .baseUrl(BASE_URL)
             .client(okHttpClient) // Attach OkHttpClient
             .addConverterFactory(GsonConverterFactory.create())
             .build()
