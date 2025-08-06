@@ -73,7 +73,12 @@ class MoviesViewModel @Inject constructor(
 
     fun searchMovies(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _searchResults.value = moviesUseCase.searchMovies(query)
+            if (query.isNotBlank()) {
+                val result = moviesUseCase.searchMovies(query)
+                _searchResults.value = result
+            } else {
+                _searchResults.value = emptyList()
+            }
         }
     }
 

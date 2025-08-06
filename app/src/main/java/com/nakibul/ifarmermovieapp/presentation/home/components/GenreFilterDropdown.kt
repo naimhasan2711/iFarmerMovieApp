@@ -1,7 +1,9 @@
 package com.nakibul.ifarmermovieapp.presentation.home.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -16,6 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun GenreFilterDropdown(
@@ -29,7 +33,8 @@ fun GenreFilterDropdown(
     Box(modifier = modifier) {
         OutlinedButton(
             onClick = { isExpanded = true },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Text(
                 text = selectedGenre ?: "All Genres",

@@ -57,7 +57,7 @@ fun SplashScreen(
             viewModel.fetchMovies()
         }
         // Wait for 5 seconds before navigating
-        delay(10000)
+        delay(5000)
         navController.navigate(Screen.Home.route) {
             popUpTo(Screen.Splash.route) { inclusive = true }
         }

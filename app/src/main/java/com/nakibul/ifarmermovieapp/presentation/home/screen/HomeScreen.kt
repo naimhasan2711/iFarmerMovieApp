@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,11 +28,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,11 +66,21 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.state.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
     val listState = rememberLazyListState()
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf<String?>(null) }
     var isSearchVisible by remember { mutableStateOf(false) }
+
+    // Trigger search when searchQuery changes
+    LaunchedEffect(searchQuery) {
+        viewModel.searchMovies(searchQuery)
+    }
+
+    // Decide which movie list to show
+    val movieList = if (searchQuery.isNotBlank()) searchResults else uiState.movieList
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,7 +91,6 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    // Search Toggle
                     IconButton(onClick = { isSearchVisible = !isSearchVisible }) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -85,7 +98,6 @@ fun HomeScreen(
                         )
                     }
 
-                    // Wishlist with Badge
                     WishlistBadge(
                         count = 10,
                         onClick = onNavigateToWishlist
@@ -107,17 +119,26 @@ fun HomeScreen(
             // Search Bar
             AnimatedVisibility(
                 visible = isSearchVisible,
-                enter = scaleIn(
-                    animationSpec = spring(stiffness = Spring.StiffnessHigh)
-                ),
-                exit = scaleOut(
-                    animationSpec = tween(300)
-                )
+                enter = scaleIn(animationSpec = spring(stiffness = Spring.StiffnessHigh)),
+                exit = scaleOut(animationSpec = tween(300))
             ) {
-
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    placeholder = { Text("Search movies...") },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.medium
+                )
             }
 
-            // Genre Filter
+            Spacer(modifier = Modifier.height(16.dp))
+            // Genre Filter (optional enhancement: filter the `movieList` by selected genre)
             GenreFilterDropdown(
                 genres = uiState.genreList,
                 selectedGenre = selectedGenre,
@@ -137,7 +158,7 @@ fun HomeScreen(
                     ) {
                         CircularProgressIndicator()
                     }
-                } else if (uiState.movieList.isEmpty()) {
+                } else if (movieList.isEmpty()) {
                     // Empty state
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -171,7 +192,7 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            items = uiState.movieList,
+                            items = movieList,
                             key = { it.id }
                         ) { movie ->
                             MovieCard(
@@ -180,6 +201,7 @@ fun HomeScreen(
                                 onWishlistClick = { }
                             )
                         }
+
                         // Loading more indicator
                         if (uiState.isLoading && uiState.movieList.isNotEmpty()) {
                             item {
@@ -199,3 +221,4 @@ fun HomeScreen(
         }
     }
 }
+
