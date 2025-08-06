@@ -1,11 +1,10 @@
-package com.nakibul.ifarmermovieapp.presentation.splash.viewmodel
+package com.nakibul.ifarmermovieapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nakibul.ifarmermovieapp.data.local.GenreDao
 import com.nakibul.ifarmermovieapp.data.local.MovieDao
 import com.nakibul.ifarmermovieapp.data.local.toDomain
-import com.nakibul.ifarmermovieapp.domain.models.local.Genre
 import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
 import com.nakibul.ifarmermovieapp.domain.models.remote.MovieResponse
 import com.nakibul.ifarmermovieapp.domain.use_case.MoviesUseCase
@@ -267,13 +266,3 @@ class MoviesViewModel @Inject constructor(
         }
     }
 }
-
-// This code defines a ViewModel for managing movie-related data in an Android application.
-data class MoviesState(
-    val isLoading: Boolean = false,
-    val moviesResponse: MovieResponse? = null,
-    val errorMessage: String = "",
-    val movieList: List<Movie> = emptyList(),
-    val genreList: List<String> = emptyList(),
-    val genreList2: List<Genre> = emptyList()
-)

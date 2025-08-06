@@ -47,12 +47,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.nakibul.ifarmermovieapp.utils.NetworkUtils
 import com.nakibul.ifarmermovieapp.presentation.home.components.GenreFilterDropdown
 import com.nakibul.ifarmermovieapp.presentation.home.components.MovieCard
 import com.nakibul.ifarmermovieapp.presentation.home.components.WishlistBadge
-import com.nakibul.ifarmermovieapp.presentation.splash.viewmodel.MoviesViewModel
+import com.nakibul.ifarmermovieapp.presentation.viewmodel.MoviesViewModel
 import com.nakibul.ifarmermovieapp.ui.theme.Purple40
+import com.nakibul.ifarmermovieapp.utils.NetworkUtils
 
 /**
  * Movie List Screen Composable
