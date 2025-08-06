@@ -33,12 +33,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
+import com.nakibul.ifarmermovieapp.R
 
 @Composable
 fun MovieCard(
@@ -72,17 +74,19 @@ fun MovieCard(
         ) {
             // Movie Poster
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(movie.posterUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Movie Poster",
-                modifier = Modifier
-                    .size(width = 100.dp, height = 150.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentScale = ContentScale.Crop
-            )
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(movie.posterUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Movie Poster",
+                        modifier = Modifier
+                            .size(width = 100.dp, height = 150.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.loading),
+                        error = painterResource(id = R.drawable.ic_image_movie)
+                    )
 
             Spacer(modifier = Modifier.width(12.dp))
 
