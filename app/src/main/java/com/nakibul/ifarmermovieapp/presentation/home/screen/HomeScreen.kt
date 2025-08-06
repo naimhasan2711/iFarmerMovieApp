@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,8 +54,10 @@ import com.nakibul.ifarmermovieapp.presentation.home.components.GenreFilterDropd
 import com.nakibul.ifarmermovieapp.presentation.home.components.MovieCard
 import com.nakibul.ifarmermovieapp.presentation.home.components.WishlistBadge
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.MoviesViewModel
+import com.nakibul.ifarmermovieapp.presentation.viewmodel.ThemeViewModel
 import com.nakibul.ifarmermovieapp.ui.theme.Purple40
 import com.nakibul.ifarmermovieapp.utils.NetworkUtils
+import com.nakibul.ifarmermovieapp.R
 
 /**
  * Movie List Screen Composable
@@ -63,7 +68,8 @@ import com.nakibul.ifarmermovieapp.utils.NetworkUtils
 fun HomeScreen(
     onNavigateToDetails: (Int) -> Unit,
     onNavigateToWishlist: () -> Unit,
-    viewModel: MoviesViewModel = hiltViewModel()
+    viewModel: MoviesViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState by viewModel.state.collectAsState()
@@ -71,6 +77,7 @@ fun HomeScreen(
     val pagedMovies by viewModel.pagedMovies.collectAsState()
     val isLoadingMore by viewModel.isLoadingMore.collectAsState()
     val favoriteMovies by viewModel.favoriteMovies.collectAsState()
+    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
     val listState = rememberLazyListState()
 
     var searchQuery by remember { mutableStateOf("") }
@@ -118,6 +125,15 @@ fun HomeScreen(
                             contentDescription = "Search"
                         )
                     }
+
+                    // Theme toggle icon
+                    IconButton(onClick = { themeViewModel.toggleTheme() }) {
+                        Icon(
+                            painter = if (isDarkTheme) painterResource(id = R.drawable.ic_light) else painterResource(id = R.drawable.ic_dark),
+                            contentDescription = if (isDarkTheme) "Switch to Light Theme" else "Switch to Dark Theme"
+                        )
+                    }
+
 
                     WishlistBadge(
                         count = favoriteMovies.size, // Use favoriteMovies.size instead of uiState.movieList.count
