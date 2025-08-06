@@ -1,11 +1,14 @@
 package com.nakibul.ifarmermovieapp.presentation.home.screen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,13 +27,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,13 +38,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.nakibul.ifarmermovieapp.NetworkUtils
 import com.nakibul.ifarmermovieapp.presentation.home.components.GenreFilterDropdown
 import com.nakibul.ifarmermovieapp.presentation.home.components.MovieCard
 import com.nakibul.ifarmermovieapp.presentation.home.components.WishlistBadge
 import com.nakibul.ifarmermovieapp.presentation.splash.viewmodel.MoviesViewModel
+import com.nakibul.ifarmermovieapp.ui.theme.Purple40
 
 /**
  * Movie List Screen Composable
@@ -57,28 +60,19 @@ fun HomeScreen(
     onNavigateToWishlist: () -> Unit,
     viewModel: MoviesViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf<String?>(null) }
     var isSearchVisible by remember { mutableStateOf(false) }
-
-
-    // Show error messages
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage.let { message ->
-            snackbarHostState.showSnackbar(message)
-        }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Movies",
+                        text = "Movie App",
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -103,8 +97,7 @@ fun HomeScreen(
                     actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -151,9 +144,23 @@ fun HomeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No movies found",
+                            text = "No movies found, click here to fetch ",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .background(color = Purple40)
+                                .padding(8.dp)
+                                .clickable {
+                                    if (NetworkUtils.isInternetAvailable(context)) {
+                                        viewModel.fetchMovies()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "No internet connection.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
                         )
                     }
                 } else {

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -37,10 +38,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
 import com.nakibul.ifarmermovieapp.R
+import com.nakibul.ifarmermovieapp.utils.Utility.convertMinutesToHourMin
 
 @Composable
 fun MovieCard(
@@ -101,7 +104,7 @@ fun MovieCard(
                     // Title
                     Text(
                         text = movie.title,
-                        style = MaterialTheme.typography.titleMedium,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
@@ -110,11 +113,19 @@ fun MovieCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     // Release Date
-                    Text(
-                        text = movie.year,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+                        Text(
+                            text = movie.year,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = convertMinutesToHourMin(movie.runtime),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
 

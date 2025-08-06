@@ -57,7 +57,7 @@ fun SplashScreen(
             viewModel.fetchMovies()
         }
         // Wait for 5 seconds before navigating
-        delay(5000)
+        delay(10000)
         navController.navigate(Screen.Home.route) {
             popUpTo(Screen.Splash.route) { inclusive = true }
         }
@@ -110,31 +110,48 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             // Loading/Error State
-            when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(48.dp)
-                    )
+            if (!NetworkUtils.isInternetAvailable(context) && uiState.movieList.isEmpty()) {
+                Text(
+                    text = "No internet connection. Please check your network settings.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            else if( uiState.movieList.isNotEmpty() && !uiState.isLoading && uiState.errorMessage.isEmpty() && !NetworkUtils.isInternetAvailable(context)) {
+                Text(
+                    text = "Movies loaded from offline successfully!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center
+                )
+            }
+            else {
+                when {
+                    uiState.isLoading -> {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Loading movies...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Loading movies...",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-                    )
-                }
-
-                uiState.errorMessage.isNotEmpty() -> {
-                    Text(
-                        text = uiState.errorMessage,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    uiState.errorMessage.isNotEmpty() -> {
+                        Text(
+                            text = uiState.errorMessage,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }

@@ -44,7 +44,7 @@ class MoviesViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         moviesResponse = remote,
                         isLoading = false,
-                        errorMessage = "",
+                        errorMessage = "Cached data is empty, fetched from remote",
                         movieList = remote.movies,
                         genreList = remote.genres
                     )
