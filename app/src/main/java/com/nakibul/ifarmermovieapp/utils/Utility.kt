@@ -5,6 +5,6 @@ object Utility {
         val totalMinutes = time.toIntOrNull() ?: return ""
         val hours = totalMinutes / 60
         val minutes = totalMinutes % 60
-        return "${hours}h ${minutes}min"
+        return "${hours}h ${minutes}m"
     }
 }

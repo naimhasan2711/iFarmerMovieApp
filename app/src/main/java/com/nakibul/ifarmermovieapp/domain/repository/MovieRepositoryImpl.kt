@@ -1,6 +1,5 @@
 package com.nakibul.ifarmermovieapp.domain.repository
 
-import android.util.Log
 import com.nakibul.ifarmermovieapp.data.datasource.MovieDataSource
 import com.nakibul.ifarmermovieapp.data.local.GenreDao
 import com.nakibul.ifarmermovieapp.data.local.MovieDao
@@ -17,9 +16,10 @@ class MovieRepositoryImpl(
     private val movieDao: MovieDao,
     private val genreDao: GenreDao
 ) : MovieRepository {
+
+    // this function is used to fetch the movie response from the remote data source and then cache it in the local database
     override suspend fun fetMovieResponse(): MovieResponse {
         return try {
-            Log.d(TAG, "fetMovieResponse: remote")
             val remote = movieDataSource.getMovieResponse()
             movieDao.clearMovies()
             movieDao.insertMovies(remote.movies.map { it.toEntity() })
@@ -32,7 +32,6 @@ class MovieRepositoryImpl(
             }
             remote
         } catch (e: Exception) {
-            Log.d(TAG, "fetMovieResponse: local")
             val cached = movieDao.getAllMovies().map { it.toDomain() }
             MovieResponse(
                 genres = cached.flatMap { it.genres }.distinct(),
@@ -41,15 +40,23 @@ class MovieRepositoryImpl(
         }
     }
 
+    // this function is used to search the movies list from the local database
     override suspend fun searchMovies(query: String): List<Movie> {
         return movieDao.searchMovies(query).map { it.toDomain() }
     }
 
+    // this function is used to get all genres from the local database
     override suspend fun getAllGenres(): List<Genre> {
         return genreDao.getAllGenres()
     }
 
+    // this function is used to get the movies list from the local database with pagination
     override suspend fun getMoviesPaged(limit: Int, offset: Int): List<Movie> {
         return movieDao.getMoviesPaged(limit, offset).map { it.toDomain() }
+    }
+
+    // this function is used to get the movie by id from the local database
+    override suspend fun getMovieById(movieId: Int): Movie? {
+        return movieDao.getMovieById(movieId) as Movie?
     }
 }

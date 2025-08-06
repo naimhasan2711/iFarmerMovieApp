@@ -39,12 +39,23 @@ class MoviesViewModel @Inject constructor(
     private val _isLoadingMore = MutableStateFlow(false)
     val isLoadingMore = _isLoadingMore.asStateFlow()
 
+    private val _selectedMovie = MutableStateFlow<Movie?>(null)
+    val selectedMovie = _selectedMovie.asStateFlow()
+
+    /**
+     * Initialize the ViewModel by fetching movies, genres, and loading initial movies.
+     * This is called when the ViewModel is created.
+     */
     init {
         fetchMovies()
         getAllGenres()
         loadInitialMovies()
     }
 
+    /**
+     * Fetch movies from local database or remote API.
+     * If local cache is empty, it fetches from remote and updates the local database.
+     */
     fun fetchMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -82,6 +93,10 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Search movies based on the query.
+     * If the query is blank, it returns an empty list.
+     */
     fun searchMovies(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
             if (query.isNotBlank()) {
@@ -93,6 +108,10 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetch all genres from the remote API and update the state.
+     * If an error occurs, it updates the error message in the state.
+     */
     fun getAllGenres() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -108,6 +127,10 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Load initial movies for pagination.
+     * Resets the current page and endReached flag.
+     */
     fun loadInitialMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _state.value = _state.value.copy(isLoading = true)
@@ -119,6 +142,11 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Load more movies for pagination.
+     * It checks if the end is reached or if more movies are already loading.
+     * If not, it fetches the next page of movies and updates the state.
+     */
     fun loadMoreMovies() {
         if (endReached || _isLoadingMore.value) return
         viewModelScope.launch(Dispatchers.IO) {
@@ -134,8 +162,32 @@ class MoviesViewModel @Inject constructor(
             _isLoadingMore.value = false
         }
     }
+
+    /**
+     * Get a movie by its ID.
+     * It first checks the paged movies and then the state movie list.
+     * If not found, it fetches from the local database.
+     */
+    fun getMovieById(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val movie = _pagedMovies.value.find { it.id == id }
+                    ?: _state.value.movieList.find { it.id == id }
+                    ?: movieDao.getMovieById(id)?.toDomain()
+
+                movie?.let {
+                    _selectedMovie.value = it
+                } ?: run {
+                    _selectedMovie.value = null
+                }
+            } catch (e: Exception) {
+                _selectedMovie.value = null
+            }
+        }
+    }
 }
 
+// This code defines a ViewModel for managing movie-related data in an Android application.
 data class MoviesState(
     val isLoading: Boolean = false,
     val moviesResponse: MovieResponse? = null,
