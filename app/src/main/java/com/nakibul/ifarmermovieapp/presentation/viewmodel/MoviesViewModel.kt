@@ -2,9 +2,6 @@ package com.nakibul.ifarmermovieapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nakibul.ifarmermovieapp.data.local.GenreDao
-import com.nakibul.ifarmermovieapp.data.local.MovieDao
-import com.nakibul.ifarmermovieapp.data.local.toDomain
 import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
 import com.nakibul.ifarmermovieapp.domain.models.remote.MovieResponse
 import com.nakibul.ifarmermovieapp.domain.use_case.MoviesUseCase
@@ -20,9 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val moviesUseCase: MoviesUseCase,
-    private val movieDao: MovieDao,
-    private val genreDao: GenreDao
+    private val moviesUseCase: MoviesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MoviesState())
@@ -64,7 +59,7 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _state.value = _state.value.copy(isLoading = true)
-                val cached = movieDao.getAllMovies()
+                val cached = moviesUseCase.getCachedMovies()
                 if (cached.isEmpty()) {
                     val remote = moviesUseCase.fetchMovieList()
                     _state.value = _state.value.copy(
@@ -75,7 +70,7 @@ class MoviesViewModel @Inject constructor(
                         genreList = remote.genres
                     )
                 } else {
-                    val movies = cached.map { it.toDomain() }
+                    val movies = cached
                     _state.value = _state.value.copy(
                         moviesResponse = MovieResponse(
                             movies.flatMap { it.genres }.distinct(),
@@ -85,7 +80,7 @@ class MoviesViewModel @Inject constructor(
                         errorMessage = "",
                         movieList = movies,
                         genreList = movies.flatMap { it.genres }.distinct(),
-                        genreList2 = genreDao.getAllGenres()
+                        genreList2 = moviesUseCase.getCachedGenres()
                     )
                 }
             } catch (e: Exception) {
@@ -177,7 +172,7 @@ class MoviesViewModel @Inject constructor(
             try {
                 val movie = _pagedMovies.value.find { it.id == id }
                     ?: _state.value.movieList.find { it.id == id }
-                    ?: movieDao.getMovieById(id)?.toDomain()
+                    ?: moviesUseCase.getMovieById(id)
 
                 movie?.let {
                     _selectedMovie.value = it
