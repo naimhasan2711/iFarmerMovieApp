@@ -1,4 +1,4 @@
-# 🎬 Movie App iFarmer
+# 🎬 iFarmerMovieApp
 
 A modern Android movie discovery application built with **Jetpack Compose** and **Clean Architecture** principles. The app fetches movie data from a remote API once and then operates offline, providing a seamless movie browsing experience with wishlist functionality.
 
@@ -18,8 +18,6 @@ A modern Android movie discovery application built with **Jetpack Compose** and 
 ### Bonus Features
 - ✅ **Dark Theme Support** - Automatic light/dark theme switching
 - ✅ **Material 3 Design** - Modern UI following Material Design guidelines
-- ✅ **Modular Architecture** - Clean separation into app, domain, and data modules
-- ✅ **Unit Tests** - Comprehensive testing for business logic
 - ✅ **Beautiful Animations** - Compose animations throughout the app
 - ✅ **Error Handling** - Graceful error handling with user feedback
 
@@ -64,12 +62,10 @@ The app follows **Clean Architecture** principles with clear separation of conce
 | **Architecture** | Clean Architecture + MVVM |
 | **Database** | Room |
 | **Networking** | Retrofit + OkHttp |
-| **Serialization** | Kotlinx Serialization |
 | **Dependency Injection** | Hilt |
 | **State Management** | StateFlow + Compose State |
 | **Image Loading** | Coil |
 | **Navigation** | Navigation Compose |
-| **Testing** | JUnit + Mockito |
 
 ## 🚀 Setup Instructions
 
@@ -82,7 +78,7 @@ The app follows **Clean Architecture** principles with clear separation of conce
 ### 1. Clone the Repository
 ```bash
 git clone <repository-url>
-cd MovieAppIFarmer
+cd iFarmerMovieApp
 ```
 
 ### 2. Open in Android Studio
@@ -101,14 +97,6 @@ cd MovieAppIFarmer
 2. Click the "Run" button in Android Studio
 3. The app will automatically sync movie data on first launch
 
-### 5. Run Tests
-```bash
-# Run unit tests
-./gradlew test
-
-# Run instrumented tests
-./gradlew connectedAndroidTest
-```
 
 ## 📡 API Integration
 
@@ -126,46 +114,20 @@ https://raw.githubusercontent.com/erik-sytnyk/movies-list/master/db.json
 
 ### Movies Table
 ```sql
-CREATE TABLE movies (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    overview TEXT NOT NULL,
-    releaseDate TEXT NOT NULL,
-    posterPath TEXT,
-    backdropPath TEXT,
-    voteAverage REAL NOT NULL,
-    voteCount INTEGER NOT NULL,
-    genres TEXT NOT NULL,        -- Comma-separated genres
-    runtime INTEGER,
-    originalLanguage TEXT NOT NULL,
-    popularity REAL NOT NULL,
-    isWishlisted INTEGER NOT NULL DEFAULT 0
-);
+MovieEntity(
+    val id: Int,
+    val title: String,
+    val plot: String,
+    val posterUrl: String,
+    val runtime: String,
+    val year: String,
+    val director: String,
+    val actors: String,
+    val genres: List<String>,
+    val isFavorite: Boolean 
+)
 ```
 
-## 🧪 Testing Strategy
-
-### Unit Tests Coverage
-- ✅ **Use Cases** - Business logic validation
-- ✅ **Repository** - Data operations testing
-- ✅ **ViewModels** - UI state management testing
-
-### Test Examples
-```kotlin
-// Use Case Testing
-@Test
-fun `getMovies should return paginated movies`() = runTest {
-    // Given
-    val expectedMovies = listOf(sampleMovie)
-    whenever(repository.getMovies(0, 10, null))
-        .thenReturn(flowOf(expectedMovies))
-    
-    // When & Then
-    getMoviesUseCase(0, 10, null).collect { movies ->
-        assertEquals(expectedMovies, movies)
-    }
-}
-```
 
 ## 🎨 UI/UX Features
 
@@ -178,15 +140,12 @@ fun `getMovies should return paginated movies`() = runTest {
 
 ### Screen Breakdown
 1. **Splash Screen** - Animated logo with loading states
-2. **Movie List** - Grid/list view with search and filter
+2. **Movie List** - list view with search and filter
 3. **Movie Details** - Rich movie information with backdrop
 4. **Wishlist** - Personal collection management
 
 ## 🔧 Configuration
 
-### Build Variants
-- **Debug** - Development build with logging
-- **Release** - Production build with optimization
 
 ### Minimum Requirements
 - **Min SDK**: 24 (Android 7.0)
@@ -201,29 +160,16 @@ fun `getMovies should return paginated movies`() = runTest {
 - **State Management** - Efficient Compose recomposition
 - **Memory Management** - Proper lifecycle-aware components
 
-## 🤝 Contributing
-
-### Git Workflow
-1. **Feature Branches** - Create feature-specific branches
-2. **Commit Messages** - Use conventional commit format
-3. **Pull Requests** - Code review before merging
-4. **Testing** - Ensure all tests pass before submission
-
 ### Code Style
 - Follow **Kotlin coding conventions**
-- Use **ktlint** for code formatting
-- Document public APIs with KDoc
 - Write meaningful commit messages
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👥 Author
 
-**iFarmer Development Team**
+**Md Nakibul Hassan**
 
-For questions or support, please contact: [your-email@example.com]
+For questions or support, please contact: [nakibhasan2711@gmail.com]
 
 ---
 
@@ -233,4 +179,4 @@ For questions or support, please contact: [your-email@example.com]
 
 ---
 
-**Made with ❤️ using Jetpack Compose**
+**Made with ❤️ using Kotlin & Jetpack Compose**
