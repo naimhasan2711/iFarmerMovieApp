@@ -78,8 +78,20 @@ fun HomeScreen(
         viewModel.searchMovies(searchQuery)
     }
 
-    // Decide which movie list to show
-    val movieList = if (searchQuery.isNotBlank()) searchResults else uiState.movieList
+    // Decide which movie list to show and apply genre filter
+    val movieList = if (searchQuery.isNotBlank()) {
+        searchResults
+    } else {
+        uiState.movieList.let { movies ->
+            if (selectedGenre != null) {
+                movies.filter { movie ->
+                    movie.genres.contains(selectedGenre) == true
+                }
+            } else {
+                movies
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -138,7 +150,7 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            // Genre Filter (optional enhancement: filter the `movieList` by selected genre)
+            // Genre Filter
             GenreFilterDropdown(
                 genres = uiState.genreList,
                 selectedGenre = selectedGenre,
@@ -221,4 +233,3 @@ fun HomeScreen(
         }
     }
 }
-
