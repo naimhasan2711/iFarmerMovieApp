@@ -57,6 +57,21 @@ class MovieRepositoryImpl(
 
     // this function is used to get the movie by id from the local database
     override suspend fun getMovieById(movieId: Int): Movie? {
-        return movieDao.getMovieById(movieId) as Movie?
+        return movieDao.getMovieById(movieId)?.toDomain()
+    }
+
+    // Toggle the favorite status of a movie
+    override suspend fun toggleFavoriteStatus(movieId: Int) {
+        movieDao.toggleFavorite(movieId)
+    }
+
+    // Get all favorite movies
+    override suspend fun getFavoriteMovies(): List<Movie> {
+        return movieDao.getFavoriteMovies().map { it.toDomain() }
+    }
+
+    // Set the favorite status of a movie
+    override suspend fun setFavoriteStatus(movieId: Int, isFavorite: Boolean) {
+        movieDao.setFavoriteStatus(movieId, isFavorite)
     }
 }

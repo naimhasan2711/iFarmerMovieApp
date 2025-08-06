@@ -12,7 +12,8 @@ fun Movie.toEntity(): MovieEntity = MovieEntity(
     year = year,
     director = director,
     actors = actors,
-    genres = genres
+    genres = genres,
+    isFavorite = isFavorite
 )
 
 fun MovieEntity.toDomain(): Movie = Movie(
@@ -24,5 +25,6 @@ fun MovieEntity.toDomain(): Movie = Movie(
     year = year,
     director = director,
     actors = actors,
-    genres = genres
+    genres = genres,
+    isFavorite = isFavorite
 )

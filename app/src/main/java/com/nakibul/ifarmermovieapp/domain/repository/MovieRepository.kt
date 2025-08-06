@@ -10,4 +10,7 @@ interface MovieRepository {
     suspend fun getAllGenres(): List<Genre>
     suspend fun getMoviesPaged(limit: Int, offset: Int): List<Movie>
     suspend fun getMovieById(movieId: Int): Movie?
+    suspend fun toggleFavoriteStatus(movieId: Int)
+    suspend fun getFavoriteMovies(): List<Movie>
+    suspend fun setFavoriteStatus(movieId: Int, isFavorite: Boolean)
 }

@@ -70,11 +70,17 @@ fun HomeScreen(
     val searchResults by viewModel.searchResults.collectAsState()
     val pagedMovies by viewModel.pagedMovies.collectAsState()
     val isLoadingMore by viewModel.isLoadingMore.collectAsState()
+    val favoriteMovies by viewModel.favoriteMovies.collectAsState()
     val listState = rememberLazyListState()
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf<String?>(null) }
     var isSearchVisible by remember { mutableStateOf(false) }
+
+    // Load favorite movies to ensure count is up-to-date
+    LaunchedEffect(Unit) {
+        viewModel.loadFavoriteMovies()
+    }
 
     // Trigger search when searchQuery changes
     LaunchedEffect(searchQuery) {
@@ -114,7 +120,7 @@ fun HomeScreen(
                     }
 
                     WishlistBadge(
-                        count = 10,
+                        count = favoriteMovies.size, // Use favoriteMovies.size instead of uiState.movieList.count
                         onClick = onNavigateToWishlist
                     )
                 },
@@ -214,7 +220,7 @@ fun HomeScreen(
                             MovieCard(
                                 movie = movie,
                                 onMovieClick = { onNavigateToDetails(movie.id) },
-                                onWishlistClick = { }
+                                onFavoriteClick = { viewModel.toggleFavorite(movie.id) }
                             )
                         }
 

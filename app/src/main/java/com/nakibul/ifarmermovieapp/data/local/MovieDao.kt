@@ -40,4 +40,16 @@ interface MovieDao {
     // Get a movie by its ID
     @Query("SELECT * FROM movies WHERE id = :movieId")
     suspend fun getMovieById(movieId: Int): MovieEntity?
+    
+    // Toggle favorite status of a movie
+    @Query("UPDATE movies SET isFavorite = NOT isFavorite WHERE id = :movieId")
+    suspend fun toggleFavorite(movieId: Int)
+    
+    // Get all favorite movies
+    @Query("SELECT * FROM movies WHERE isFavorite = 1 ORDER BY year DESC")
+    suspend fun getFavoriteMovies(): List<MovieEntity>
+    
+    // Set specific favorite status for a movie
+    @Query("UPDATE movies SET isFavorite = :isFavorite WHERE id = :movieId")
+    suspend fun setFavoriteStatus(movieId: Int, isFavorite: Boolean)
 }

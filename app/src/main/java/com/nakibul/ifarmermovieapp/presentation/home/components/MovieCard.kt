@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -49,18 +49,20 @@ import com.nakibul.ifarmermovieapp.utils.Utility.convertMinutesToHourMin
 fun MovieCard(
     movie: Movie,
     onMovieClick: () -> Unit,
-    onWishlistClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val wishlistScale by animateFloatAsState(
-        targetValue =  1.2f ,
+    val isFavorite = movie.isFavorite
+
+    val favoriteScale by animateFloatAsState(
+        targetValue = if (isFavorite) 1.2f else 1.0f,
         animationSpec = spring(),
-        label = "wishlist_scale"
+        label = "favorite_scale"
     )
 
-    val wishlistColor by animateColorAsState(
-        targetValue = Color.Red,
-        label = "wishlist_color"
+    val favoriteColor by animateColorAsState(
+        targetValue = if (isFavorite) Color.Red else Color.Gray,
+        label = "favorite_color"
     )
 
     Card(
@@ -77,19 +79,19 @@ fun MovieCard(
         ) {
             // Movie Poster
             AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(movie.posterUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "Movie Poster",
-                        modifier = Modifier
-                            .size(width = 100.dp, height = 150.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentScale = ContentScale.Crop,
-                        placeholder = painterResource(id = R.drawable.loading),
-                        error = painterResource(id = R.drawable.ic_image_movie)
-                    )
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(movie.posterUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Movie Poster",
+                modifier = Modifier
+                    .size(width = 100.dp, height = 150.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.loading),
+                error = painterResource(id = R.drawable.ic_image_movie)
+            )
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -149,29 +151,27 @@ fun MovieCard(
                     )
                 }
 
-                // Bottom section with rating and wishlist
+                // Bottom section with rating and favorite
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Text(
+                        text = "Director: ${movie.director}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium
+                    )
 
-                        Text(
-                            text =  "Director: ${movie.director}",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium
-                        )
-
-
-                    // Wishlist Button
+                    // Favorite Button
                     IconButton(
-                        onClick = onWishlistClick,
-                        modifier = Modifier.scale(wishlistScale)
+                        onClick = onFavoriteClick,
+                        modifier = Modifier.scale(favoriteScale)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Favorite ,
-                            contentDescription = "Add to Wishlist",
-                            tint = wishlistColor
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = if (isFavorite) "Remove from Favorites" else "Add to Favorites",
+                            tint = favoriteColor
                         )
                     }
                 }

@@ -42,6 +42,9 @@ class MoviesViewModel @Inject constructor(
     private val _selectedMovie = MutableStateFlow<Movie?>(null)
     val selectedMovie = _selectedMovie.asStateFlow()
 
+    private val _favoriteMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val favoriteMovies: StateFlow<List<Movie>> = _favoriteMovies.asStateFlow()
+
     /**
      * Initialize the ViewModel by fetching movies, genres, and loading initial movies.
      * This is called when the ViewModel is created.
@@ -50,6 +53,7 @@ class MoviesViewModel @Inject constructor(
         fetchMovies()
         getAllGenres()
         loadInitialMovies()
+        loadFavoriteMovies() // Add this line to load favorite movies at startup
     }
 
     /**
@@ -183,6 +187,74 @@ class MoviesViewModel @Inject constructor(
             } catch (e: Exception) {
                 _selectedMovie.value = null
             }
+        }
+    }
+
+    /**
+     * Toggle favorite status of a movie.
+     * Updates both database and UI state.
+     */
+    fun toggleFavorite(movieId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            moviesUseCase.toggleFavorite(movieId)
+            
+            // Update selected movie if it's the one being toggled
+            _selectedMovie.value?.let {
+                if (it.id == movieId) {
+                    val updatedMovie = moviesUseCase.getMovieById(movieId)
+                    _selectedMovie.value = updatedMovie
+                }
+            }
+            
+            // Refresh paged movies to reflect changes in the UI
+            refreshCurrentPageMovies()
+            
+            // Always update favorites list to ensure the count is accurate
+            loadFavoriteMovies()
+        }
+    }
+    
+    /**
+     * Set specific favorite status for a movie
+     */
+    fun setFavoriteStatus(movieId: Int, isFavorite: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            moviesUseCase.setFavoriteStatus(movieId, isFavorite)
+            
+            // Same updates as toggleFavorite
+            _selectedMovie.value?.let {
+                if (it.id == movieId) {
+                    val updatedMovie = moviesUseCase.getMovieById(movieId)
+                    _selectedMovie.value = updatedMovie
+                }
+            }
+            
+            refreshCurrentPageMovies()
+            
+            if (_favoriteMovies.value.isNotEmpty()) {
+                loadFavoriteMovies()
+            }
+        }
+    }
+    
+    /**
+     * Load all favorite movies
+     */
+    fun loadFavoriteMovies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val favorites = moviesUseCase.getFavoriteMovies()
+            _favoriteMovies.value = favorites
+        }
+    }
+    
+    /**
+     * Refresh the current page of movies to reflect favorite status changes
+     */
+    private fun refreshCurrentPageMovies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val offset = currentPage * pageSize
+            val refreshed = moviesUseCase.getMoviesPaged(pageSize, offset)
+            _pagedMovies.value = refreshed
         }
     }
 }

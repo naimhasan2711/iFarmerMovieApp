@@ -19,10 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,17 +28,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nakibul.ifarmermovieapp.R
 import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
+import com.nakibul.ifarmermovieapp.presentation.splash.viewmodel.MoviesViewModel
 import com.nakibul.ifarmermovieapp.utils.Utility.convertMinutesToHourMin
 
 
 @Composable
-fun MovieDetails(movie: Movie) {
+fun MovieDetails(movie: Movie, viewModel: MoviesViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
-    var isFavorite by remember { mutableStateOf(false) }
+    var isFavorite = movie.isFavorite
 
     Column(
         modifier = Modifier
@@ -79,7 +77,10 @@ fun MovieDetails(movie: Movie) {
                 modifier = Modifier.weight(1f)
             )
 
-            IconButton(onClick = { isFavorite = !isFavorite }) {
+            IconButton(onClick = {
+                isFavorite = !isFavorite
+                viewModel.toggleFavorite(movie.id)
+            }) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                     contentDescription = "Add to favorites",

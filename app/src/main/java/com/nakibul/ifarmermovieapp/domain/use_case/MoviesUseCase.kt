@@ -8,4 +8,9 @@ class MoviesUseCase @Inject constructor(private val movieRepository: MovieReposi
     suspend fun searchMovies(query: String) = movieRepository.searchMovies(query)
     suspend fun getAllGenres() = movieRepository.getAllGenres()
     suspend fun getMoviesPaged(limit: Int, offset: Int) = movieRepository.getMoviesPaged(limit, offset)
+    suspend fun getMovieById(movieId: Int) = movieRepository.getMovieById(movieId)
+    suspend fun toggleFavorite(movieId: Int) = movieRepository.toggleFavoriteStatus(movieId)
+    suspend fun getFavoriteMovies() = movieRepository.getFavoriteMovies()
+    suspend fun setFavoriteStatus(movieId: Int, isFavorite: Boolean) = 
+        movieRepository.setFavoriteStatus(movieId, isFavorite)
 }

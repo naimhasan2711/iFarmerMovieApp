@@ -17,5 +17,6 @@ data class MovieEntity(
     val director: String,
     val actors: String,
     @TypeConverters(Converters::class)
-    val genres: List<String>
+    val genres: List<String>,
+    val isFavorite: Boolean = false  // Added field with default value false
 )
