@@ -147,7 +147,7 @@ MovieEntity(
 
 ### Screen Breakdown
 1. **Splash Screen** - Animated logo with loading states
-2. **Movie List** - list view with search and filter
+2. **Movie List** - list view & grid view with search and filter
 3. **Movie Details** - Rich movie information with backdrop
 4. **Wishlist** - Personal collection management
 
@@ -184,6 +184,7 @@ MovieEntity(
   <img src="app/src/main/res/drawable/img_4.png" alt="Wishlist Screen" width="200"/>
   <img src="app/src/main/res/drawable/img_5.png" alt="Wishlist Screen" width="200"/>
   <img src="app/src/main/res/drawable/img_6.png" alt="Wishlist Screen" width="200"/>
+  <img src="app/src/main/res/drawable/img_7.png" alt="Wishlist Screen" width="200"/>
 </div>
 
 
