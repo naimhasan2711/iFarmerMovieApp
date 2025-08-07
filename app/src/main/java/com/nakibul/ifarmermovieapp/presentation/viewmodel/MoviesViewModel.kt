@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nakibul.ifarmermovieapp.domain.models.remote.Movie
 import com.nakibul.ifarmermovieapp.domain.models.remote.MovieResponse
-import com.nakibul.ifarmermovieapp.domain.use_case.MoviesUseCase
+import com.nakibul.ifarmermovieapp.domain.use_case.FavoriteMovieUseCase
+import com.nakibul.ifarmermovieapp.domain.use_case.FetchMoviesUseCase
+import com.nakibul.ifarmermovieapp.domain.use_case.GenreUseCase
 import com.nakibul.ifarmermovieapp.utils.Constant.PAGE_SIZE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val moviesUseCase: MoviesUseCase
+    private val fetchMoviesUseCase: FetchMoviesUseCase,
+    private val genreUseCase: GenreUseCase,
+    private val favoriteMovieUseCase: FavoriteMovieUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MoviesState())
@@ -59,9 +63,9 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _state.value = _state.value.copy(isLoading = true)
-                val cached = moviesUseCase.getCachedMovies()
+                val cached = fetchMoviesUseCase.getCachedMovies()
                 if (cached.isEmpty()) {
-                    val remote = moviesUseCase.fetchMovieList()
+                    val remote = fetchMoviesUseCase.fetchMovieResponse()
                     _state.value = _state.value.copy(
                         moviesResponse = remote,
                         isLoading = false,
@@ -80,7 +84,7 @@ class MoviesViewModel @Inject constructor(
                         errorMessage = "",
                         movieList = movies,
                         genreList = movies.flatMap { it.genres }.distinct(),
-                        genreList2 = moviesUseCase.getCachedGenres()
+                        genreList2 = genreUseCase.getCachedGenres()
                     )
                 }
             } catch (e: Exception) {
@@ -99,7 +103,7 @@ class MoviesViewModel @Inject constructor(
     fun searchMovies(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
             if (query.isNotBlank()) {
-                val result = moviesUseCase.searchMovies(query)
+                val result = fetchMoviesUseCase.searchMovies(query)
                 _searchResults.value = result
             } else {
                 _searchResults.value = emptyList()
@@ -114,7 +118,7 @@ class MoviesViewModel @Inject constructor(
     fun getAllGenres() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val genres = moviesUseCase.getAllGenres()
+                val genres = genreUseCase.getAllGenres()
                 _state.value = _state.value.copy(
                     genreList2 = genres
                 )
@@ -135,7 +139,7 @@ class MoviesViewModel @Inject constructor(
             _state.value = _state.value.copy(isLoading = true)
             currentPage = 0
             endReached = false
-            val movies = moviesUseCase.getMoviesPaged(PAGE_SIZE, 0)
+            val movies = fetchMoviesUseCase.getMoviesPaged(PAGE_SIZE, 0)
             _pagedMovies.value = movies
             _state.value = _state.value.copy(isLoading = false)
         }
@@ -151,7 +155,7 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _isLoadingMore.value = true
             val nextOffset = (currentPage + 1) * PAGE_SIZE
-            val movies = moviesUseCase.getMoviesPaged(PAGE_SIZE, nextOffset)
+            val movies = fetchMoviesUseCase.getMoviesPaged(PAGE_SIZE, nextOffset)
             if (movies.isEmpty()) {
                 endReached = true
             } else {
@@ -172,7 +176,7 @@ class MoviesViewModel @Inject constructor(
             try {
                 val movie = _pagedMovies.value.find { it.id == id }
                     ?: _state.value.movieList.find { it.id == id }
-                    ?: moviesUseCase.getMovieById(id)
+                    ?: fetchMoviesUseCase.getMovieById(id)
 
                 movie?.let {
                     _selectedMovie.value = it
@@ -193,12 +197,12 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch {
             // Perform database operation in IO dispatcher
             withContext(Dispatchers.IO) {
-                moviesUseCase.toggleFavorite(movieId)
+                favoriteMovieUseCase.toggleFavorite(movieId)
                 
                 // Update selected movie if it's the one being toggled
                 _selectedMovie.value?.let {
                     if (it.id == movieId) {
-                        val updatedMovie = moviesUseCase.getMovieById(movieId)
+                        val updatedMovie = fetchMoviesUseCase.getMovieById(movieId)
                         _selectedMovie.value = updatedMovie
                     }
                 }
@@ -217,12 +221,12 @@ class MoviesViewModel @Inject constructor(
      */
     fun setFavoriteStatus(movieId: Int, isFavorite: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            moviesUseCase.setFavoriteStatus(movieId, isFavorite)
+            favoriteMovieUseCase.setFavoriteStatus(movieId, isFavorite)
             
             // Same updates as toggleFavorite
             _selectedMovie.value?.let {
                 if (it.id == movieId) {
-                    val updatedMovie = moviesUseCase.getMovieById(movieId)
+                    val updatedMovie = fetchMoviesUseCase.getMovieById(movieId)
                     _selectedMovie.value = updatedMovie
                 }
             }
@@ -242,7 +246,7 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch {
             // Get favorites in IO context
             val favorites = withContext(Dispatchers.IO) {
-                moviesUseCase.getFavoriteMovies()
+                favoriteMovieUseCase.getFavoriteMovies()
             }
             
             // Update the state flow - this happens on the main thread
@@ -256,7 +260,7 @@ class MoviesViewModel @Inject constructor(
     private fun refreshCurrentPageMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             val offset = currentPage * PAGE_SIZE
-            val refreshed = moviesUseCase.getMoviesPaged(PAGE_SIZE, offset)
+            val refreshed = fetchMoviesUseCase.getMoviesPaged(PAGE_SIZE, offset)
             _pagedMovies.value = refreshed
         }
     }
