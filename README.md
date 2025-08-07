@@ -176,13 +176,14 @@ MovieEntity(
 
 ### 📱 Screenshots
 
-<div align="center">
+<div align="start">
   <img src="app/src/main/res/drawable/img.png" alt="Splash Screen" width="200"/>
   <img src="app/src/main/res/drawable/img_1.png" alt="Home Screen" width="200"/>
   <img src="app/src/main/res/drawable/img_2.png" alt="Details Screen" width="200"/>
+  <img src="app/src/main/res/drawable/img_3.png" alt="Details Screen" width="200"/>
   <img src="app/src/main/res/drawable/img_4.png" alt="Wishlist Screen" width="200"/>
   <img src="app/src/main/res/drawable/img_5.png" alt="Wishlist Screen" width="200"/>
-  <img src="app/src/main/res/drawable/img_5.png" alt="Wishlist Screen" width="200"/>
+  <img src="app/src/main/res/drawable/img_6.png" alt="Wishlist Screen" width="200"/>
 </div>
 
 
