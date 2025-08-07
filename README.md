@@ -26,24 +26,31 @@ A modern Android movie discovery application built with **Jetpack Compose** and 
 The app follows **Clean Architecture** principles with clear separation of concerns:
 
 ```
-📁 app/                          # Presentation Layer
+📁 app/                          
 ├── presentation/
-│   ├── screen/                  # UI Screens
-│   ├── component/               # Reusable UI Components
-│   ├── navigation/              # Navigation Logic
-│   └── theme/                   # App Theming
-│
-📁 domain/                       # Business Logic Layer
-├── model/                       # Domain Models
-├── repository/                  # Repository Interfaces
-└── usecase/                     # Business Use Cases
-│
-📁 data/                         # Data Layer
-├── local/                       # Room Database
-├── remote/                      # API Integration
-├── repository/                  # Repository Implementations
-├── mapper/                      # Data Mapping
-└── di/                          # Dependency Injection
+│   ├── ui/                      # UI Screens
+│   │   ├── details/             # Reusable UI Components
+│   │   ├── home/                # Reusable UI Components
+│   │   ├── splash/              # Reusable UI Components
+│   │   ├── wishlist/            # Reusable UI Components
+│   ├── viewmodel/               # viewmodels
+├── domain/                      # Business Logic Layer
+│   ├── models/                  # Domain Models
+│   │   ├── local/               # Domain Models
+│   │   └── remote/              # Domain Models
+│   ├── repository/              # Repository Interfaces
+│   ├── usecase/                 # Business Use Cases
+│   └── repositoryimpl/          # Repository Implementations
+├── data/                        # Data Layer
+│   ├── datasource/              # Room Database
+│   │   ├── datasourceimpl/      # Room Database
+│   │   ├── local/               # Room Database
+│   │   └── remote/              # Room Database
+│   └── mapper/                  # Data Mapping
+├── navigation/                  # Navigation Logic
+│   ├── NavGraph.kt              # Navigation Logic
+│   └── Screens.kt               # Navigation Logic
+├── di/                          # Dependency Injection
 ```
 
 ### Architecture Patterns Used
