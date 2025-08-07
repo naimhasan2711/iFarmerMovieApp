@@ -1,6 +1,5 @@
 package com.nakibul.ifarmermovieapp.presentation.ui.home.screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -10,18 +9,13 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nakibul.ifarmermovieapp.R
 import com.nakibul.ifarmermovieapp.presentation.ui.home.components.GenreFilterDropdown
-import com.nakibul.ifarmermovieapp.presentation.ui.home.components.MovieCard
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.MovieGrid
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.MovieLayoutMode
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.MovieList
 import com.nakibul.ifarmermovieapp.presentation.ui.home.components.WishlistBadge
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.MoviesViewModel
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.ThemeViewModel
@@ -76,7 +72,7 @@ fun HomeScreen(
     val isLoadingMore by viewModel.isLoadingMore.collectAsState()
     val favoriteMovies by viewModel.favoriteMovies.collectAsState()
     val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
-    val listState = rememberLazyListState()
+    val layoutMode by themeViewModel.layoutMode.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedGenre by remember { mutableStateOf<String?>(null) }
@@ -122,6 +118,18 @@ fun HomeScreen(
                     )
                 },
                 actions = {
+                    // Layout toggle button
+                    IconButton(onClick = { 
+                        themeViewModel.toggleLayoutMode()
+                    }) {
+                        Icon(
+                            painter = if (layoutMode == MovieLayoutMode.LIST)
+                                painterResource(R.drawable.ic_grid) else painterResource(R.drawable.ic_list),
+                            contentDescription = if (layoutMode == MovieLayoutMode.LIST) 
+                                "Switch to Grid View" else "Switch to List View"
+                        )
+                    }
+                    
                     IconButton(onClick = { isSearchVisible = !isSearchVisible }) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -225,49 +233,27 @@ fun HomeScreen(
                         )
                     }
                 } else {
-                    // Movies list
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = movieList,
-                            key = { it.id }
-                        ) { movie ->
-                            MovieCard(
-                                movie = movie,
-                                onMovieClick = { onNavigateToDetails(movie.id) },
-                                onFavoriteClick = { viewModel.toggleFavorite(movie.id) }
+                    // Choose between list or grid layout based on saved preference
+                    when (layoutMode) {
+                        MovieLayoutMode.LIST -> {
+                            MovieList(
+                                movies = movieList,
+                                isLoadingMore = isLoadingMore,
+                                onMovieClick = onNavigateToDetails,
+                                onFavoriteClick = { viewModel.toggleFavorite(it) },
+                                onLoadMore = { viewModel.loadMoreMovies() },
+                                searchQuery = searchQuery
                             )
                         }
-
-                        // Loading more indicator at the bottom
-                        if (isLoadingMore) {
-                            item {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.padding(16.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    // Trigger loading more when scrolled to the end
-                    LaunchedEffect(listState.firstVisibleItemIndex, movieList.size, isLoadingMore) {
-                        val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                        if (
-                            lastVisible != null &&
-                            lastVisible >= movieList.size - 3 &&
-                            searchQuery.isBlank() &&
-                            !isLoadingMore
-                        ) {
-                            Log.d("HomeScreen", "Loading more movies...")
-                            viewModel.loadMoreMovies()
+                        MovieLayoutMode.GRID -> {
+                            MovieGrid(
+                                movies = movieList,
+                                isLoadingMore = isLoadingMore,
+                                onMovieClick = onNavigateToDetails,
+                                onFavoriteClick = { viewModel.toggleFavorite(it) },
+                                onLoadMore = { viewModel.loadMoreMovies() },
+                                searchQuery = searchQuery
+                            )
                         }
                     }
                 }
