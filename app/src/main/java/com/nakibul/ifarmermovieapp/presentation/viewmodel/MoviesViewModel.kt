@@ -198,7 +198,6 @@ class MoviesViewModel @Inject constructor(
             // Perform database operation in IO dispatcher
             withContext(Dispatchers.IO) {
                 favoriteMovieUseCase.toggleFavorite(movieId)
-                
                 // Update selected movie if it's the one being toggled
                 _selectedMovie.value?.let {
                     if (it.id == movieId) {
@@ -206,50 +205,24 @@ class MoviesViewModel @Inject constructor(
                         _selectedMovie.value = updatedMovie
                     }
                 }
-                
-                // Refresh paged movies to reflect changes in the UI
-                refreshCurrentPageMovies()
             }
-            
             // After database operations are complete, update the UI with fresh data
+            refreshCurrentPageMovies()
             loadFavoriteMovies()
         }
     }
-    
-    /**
-     * Set specific favorite status for a movie
-     */
-    fun setFavoriteStatus(movieId: Int, isFavorite: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            favoriteMovieUseCase.setFavoriteStatus(movieId, isFavorite)
-            
-            // Same updates as toggleFavorite
-            _selectedMovie.value?.let {
-                if (it.id == movieId) {
-                    val updatedMovie = fetchMoviesUseCase.getMovieById(movieId)
-                    _selectedMovie.value = updatedMovie
-                }
-            }
-            
-            refreshCurrentPageMovies()
-            
-            if (_favoriteMovies.value.isNotEmpty()) {
-                loadFavoriteMovies()
-            }
-        }
-    }
+
     
     /**
      * Load all favorite movies
      */
     fun loadFavoriteMovies() {
         viewModelScope.launch {
-            // Get favorites in IO context
+            // Get favorites
             val favorites = withContext(Dispatchers.IO) {
                 favoriteMovieUseCase.getFavoriteMovies()
             }
-            
-            // Update the state flow - this happens on the main thread
+            // Update the state flow
             _favoriteMovies.value = favorites
         }
     }
@@ -257,10 +230,20 @@ class MoviesViewModel @Inject constructor(
     /**
      * Refresh the current page of movies to reflect favorite status changes
      */
-    private fun refreshCurrentPageMovies() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val offset = currentPage * PAGE_SIZE
-            val refreshed = fetchMoviesUseCase.getMoviesPaged(PAGE_SIZE, offset)
+    fun refreshCurrentPageMovies() {
+        viewModelScope.launch {
+            val currentMovieIds = _pagedMovies.value.map { it.id }
+            
+            val refreshed = withContext(Dispatchers.IO) {
+                // If we have movies loaded, refresh those specific movies instead of paging
+                if (currentMovieIds.isNotEmpty()) {
+                    currentMovieIds.mapNotNull { id -> fetchMoviesUseCase.getMovieById(id) }
+                } else {
+                    // Otherwise refresh the current page as before
+                    val offset = currentPage * PAGE_SIZE
+                    fetchMoviesUseCase.getMoviesPaged(PAGE_SIZE, offset)
+                }
+            }
             _pagedMovies.value = refreshed
         }
     }

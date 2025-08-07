@@ -86,13 +86,18 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.loadFavoriteMovies()
     }
+    
+    // refresh the current page
+    LaunchedEffect(true) {
+        viewModel.refreshCurrentPageMovies()
+    }
 
     // Trigger search when searchQuery changes
     LaunchedEffect(searchQuery) {
         viewModel.searchMovies(searchQuery)
     }
 
-    // Decide which movie list to show and apply genre filter
+    // apply genre filter
     val movieList = if (searchQuery.isNotBlank()) {
         searchResults
     } else {
@@ -132,9 +137,8 @@ fun HomeScreen(
                         )
                     }
 
-
                     WishlistBadge(
-                        count = favoriteMovies.size, // Use favoriteMovies.size instead of uiState.movieList.count
+                        count = favoriteMovies.size,
                         onClick = onNavigateToWishlist
                     )
                 },
