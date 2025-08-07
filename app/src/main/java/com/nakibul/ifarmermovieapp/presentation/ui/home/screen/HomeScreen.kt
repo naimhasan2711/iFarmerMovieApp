@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.presentation.home.screen
+package com.nakibul.ifarmermovieapp.presentation.ui.home.screen
 
 import android.util.Log
 import android.widget.Toast
@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,14 +48,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.nakibul.ifarmermovieapp.presentation.home.components.GenreFilterDropdown
-import com.nakibul.ifarmermovieapp.presentation.home.components.MovieCard
-import com.nakibul.ifarmermovieapp.presentation.home.components.WishlistBadge
+import com.nakibul.ifarmermovieapp.R
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.GenreFilterDropdown
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.MovieCard
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.WishlistBadge
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.MoviesViewModel
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.ThemeViewModel
 import com.nakibul.ifarmermovieapp.ui.theme.Purple40
 import com.nakibul.ifarmermovieapp.utils.NetworkUtils
-import com.nakibul.ifarmermovieapp.R
 
 /**
  * Movie List Screen Composable

@@ -7,7 +7,7 @@ import com.nakibul.ifarmermovieapp.data.local.GenreDao
 import com.nakibul.ifarmermovieapp.data.local.MovieDao
 import com.nakibul.ifarmermovieapp.data.remote.MovieApiService
 import com.nakibul.ifarmermovieapp.domain.repository.MovieRepository
-import com.nakibul.ifarmermovieapp.domain.repository.MovieRepositoryImpl
+import com.nakibul.ifarmermovieapp.domain.repositoryImpl.MovieRepositoryImpl
 import com.nakibul.ifarmermovieapp.utils.Constant.BASE_URL
 import com.nakibul.ifarmermovieapp.utils.Constant.PACKAGE_NAME
 import dagger.Module

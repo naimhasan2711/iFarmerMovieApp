@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.presentation.home.components
+package com.nakibul.ifarmermovieapp.presentation.ui.home.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState

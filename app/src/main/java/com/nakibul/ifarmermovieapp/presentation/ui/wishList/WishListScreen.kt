@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.presentation.wishlist.screen
+package com.nakibul.ifarmermovieapp.presentation.ui.wishList
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.nakibul.ifarmermovieapp.presentation.home.components.MovieCard
+import com.nakibul.ifarmermovieapp.presentation.ui.home.components.MovieCard
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.MoviesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +56,7 @@ fun WishListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Favorites",
+                        text = "WishList",
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -85,7 +85,7 @@ fun WishListScreen(
             if (favoriteMovies.isEmpty()) {
                 // Show empty state message
                 Text(
-                    text = "You don't have any favorite movies yet",
+                    text = "You don't have any wishlist movies yet",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier

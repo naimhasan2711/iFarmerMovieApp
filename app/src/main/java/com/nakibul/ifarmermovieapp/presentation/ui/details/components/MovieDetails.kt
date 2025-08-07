@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.presentation.details.components
+package com.nakibul.ifarmermovieapp.presentation.ui.details.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

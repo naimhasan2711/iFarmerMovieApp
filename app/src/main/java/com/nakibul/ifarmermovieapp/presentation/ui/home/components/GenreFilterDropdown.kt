@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.presentation.home.components
+package com.nakibul.ifarmermovieapp.presentation.ui.home.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

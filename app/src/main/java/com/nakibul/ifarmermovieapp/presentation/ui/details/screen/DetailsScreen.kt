@@ -1,4 +1,4 @@
-package com.nakibul.ifarmermovieapp.presentation.details.screen
+package com.nakibul.ifarmermovieapp.presentation.ui.details.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.nakibul.ifarmermovieapp.presentation.details.components.MovieDetails
+import com.nakibul.ifarmermovieapp.presentation.ui.details.components.MovieDetails
 import com.nakibul.ifarmermovieapp.presentation.viewmodel.MoviesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -6,10 +6,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.nakibul.ifarmermovieapp.presentation.details.screen.DetailsScreen
-import com.nakibul.ifarmermovieapp.presentation.home.screen.HomeScreen
-import com.nakibul.ifarmermovieapp.presentation.splash.screen.SplashScreen
-import com.nakibul.ifarmermovieapp.presentation.wishlist.screen.WishListScreen
+import com.nakibul.ifarmermovieapp.presentation.ui.details.screen.DetailsScreen
+import com.nakibul.ifarmermovieapp.presentation.ui.home.screen.HomeScreen
+import com.nakibul.ifarmermovieapp.presentation.ui.splash.SplashScreen
+import com.nakibul.ifarmermovieapp.presentation.ui.wishList.WishListScreen
+import com.nakibul.ifarmermovieapp.utils.Constant.MOVIE_ID
 
 @Composable
 fun SetUpNavGraph(
@@ -37,10 +38,10 @@ fun SetUpNavGraph(
         composable(
             route = Screen.Details.route,
             arguments = listOf(
-                navArgument("movieId") { type = NavType.IntType }
+                navArgument(MOVIE_ID) { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val movieId = backStackEntry.arguments?.getInt("movieId") ?: -1
+            val movieId = backStackEntry.arguments?.getInt(MOVIE_ID) ?: -1
             DetailsScreen(movieId = movieId) {
                 navController.navigate(Screen.Home.route)
             }

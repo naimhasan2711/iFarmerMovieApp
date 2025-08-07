@@ -1,5 +1,7 @@
-package com.nakibul.ifarmermovieapp.presentation.splash.screen
+package com.nakibul.ifarmermovieapp.presentation.ui.splash
 
+import android.Manifest
+import androidx.annotation.RequiresPermission
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -51,7 +53,7 @@ fun SplashScreen(
         startAnimation = true
     }
 
-    LaunchedEffect(Unit) @androidx.annotation.RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE) {
+    LaunchedEffect(Unit) @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE) {
         // Check if data has been fetched before and if internet is available
         if (NetworkUtils.isInternetAvailable(context)) {
             viewModel.fetchMovies()
@@ -121,7 +123,7 @@ fun SplashScreen(
             }
             else if( uiState.movieList.isNotEmpty() && !uiState.isLoading && uiState.errorMessage.isEmpty() && !NetworkUtils.isInternetAvailable(context)) {
                 Text(
-                    text = "Movies loaded from offline successfully!",
+                    text = "Movies loaded from offline storage successfully!",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center

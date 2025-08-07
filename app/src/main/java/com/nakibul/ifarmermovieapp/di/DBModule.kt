@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.nakibul.ifarmermovieapp.data.local.GenreDao
 import com.nakibul.ifarmermovieapp.data.local.MovieDao
 import com.nakibul.ifarmermovieapp.data.local.MovieDatabase
+import com.nakibul.ifarmermovieapp.utils.Constant.MOVIE_DATABASE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +23,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context,
             MovieDatabase::class.java,
-            "movie_db"
+            MOVIE_DATABASE
         ).build()
     }
 

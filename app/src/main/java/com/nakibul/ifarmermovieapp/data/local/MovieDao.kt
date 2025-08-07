@@ -9,19 +9,27 @@ import com.nakibul.ifarmermovieapp.domain.models.local.MovieEntity
 
 @Dao
 interface MovieDao {
-    // Insert list of movies into the database
+    /*
+    Insert a list of movies into the database.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovies(movies: List<MovieEntity>)
 
-    //fetch all movies ordered by year in descending order
+    /*
+    Get all movies from the database ordered by year in descending order.
+     */
     @Query("SELECT * FROM movies ORDER BY year DESC")
     suspend fun getAllMovies(): List<MovieEntity>
 
-    // Delete all movies from the database
+    /*
+    Clear all movies from the database.
+     */
     @Query("DELETE FROM movies")
     suspend fun clearMovies()
 
-    // Search movies by title, plot, actors, or director
+    /*
+    Search for movies based on a query string.
+     */
     @Query(
         """
         SELECT * FROM movies 
@@ -33,23 +41,33 @@ interface MovieDao {
     )
     suspend fun searchMovies(query: String): List<MovieEntity>
 
-    // Get paginated movies ordered by year in descending order
+    /*
+    Get a paginated list of movies, ordered by year in descending order.
+     */
     @Query("SELECT * FROM movies ORDER BY year DESC LIMIT :limit OFFSET :offset")
     suspend fun getMoviesPaged(limit: Int, offset: Int): List<MovieEntity>
 
-    // Get a movie by its ID
+    /*
+    Get a movie by its ID.
+     */
     @Query("SELECT * FROM movies WHERE id = :movieId")
     suspend fun getMovieById(movieId: Int): MovieEntity?
-    
-    // Toggle favorite status of a movie
+
+    /*
+    Toggle the favorite status of a movie by its ID.
+     */
     @Query("UPDATE movies SET isFavorite = NOT isFavorite WHERE id = :movieId")
     suspend fun toggleFavorite(movieId: Int)
-    
-    // Get all favorite movies
+
+    /*
+    Get all favorite movies, ordered by year in descending order.
+     */
     @Query("SELECT * FROM movies WHERE isFavorite = 1 ORDER BY year DESC")
     suspend fun getFavoriteMovies(): List<MovieEntity>
-    
-    // Set specific favorite status for a movie
+
+    /*
+    Set the favorite status of a movie by its ID.
+     */
     @Query("UPDATE movies SET isFavorite = :isFavorite WHERE id = :movieId")
     suspend fun setFavoriteStatus(movieId: Int, isFavorite: Boolean)
 }

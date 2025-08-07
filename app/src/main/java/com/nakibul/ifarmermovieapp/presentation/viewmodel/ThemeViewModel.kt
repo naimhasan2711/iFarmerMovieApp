@@ -2,7 +2,7 @@ package com.nakibul.ifarmermovieapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nakibul.ifarmermovieapp.data.repository.UserPreferencesRepository
+import com.nakibul.ifarmermovieapp.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
