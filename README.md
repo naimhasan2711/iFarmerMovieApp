@@ -54,7 +54,7 @@ The app follows **Clean Architecture** principles with clear separation of conce
 ```
 
 ### Architecture Patterns Used
-- **MVVM (Model-View-ViewModel)** - For UI state management
+- **Clean Architecture** - For UI state management
 - **Repository Pattern** - Single source of truth for data
 - **Use Case Pattern** - Encapsulates business logic
 - **Dependency Injection** - Using Hilt for clean dependencies
@@ -66,7 +66,7 @@ The app follows **Clean Architecture** principles with clear separation of conce
 | **Language** | Kotlin |
 | **UI Framework** | Jetpack Compose |
 | **Design System** | Material 3 |
-| **Architecture** | Clean Architecture + MVVM |
+| **Architecture** | Clean Architecture  |
 | **Database** | Room |
 | **Networking** | Retrofit + OkHttp |
 | **Dependency Injection** | Hilt |
@@ -77,7 +77,7 @@ The app follows **Clean Architecture** principles with clear separation of conce
 ## 🚀 Setup Instructions
 
 ### Prerequisites
-- **Android Studio** Hedgehog | 2023.1.1 or newer
+- **Android Studio** Meerkat  or newer
 - **JDK 11** or higher
 - **Android SDK** with minimum API level 24
 - **Git** for version control
@@ -182,7 +182,16 @@ For questions or support, please contact: [nakibhasan2711@gmail.com]
 
 ### 📱 Screenshots
 
-*Add screenshots of your app here*
+<div align="center">
+  <img src="app/src/main/res/drawable/img.png" alt="Splash Screen" width="220"/>
+  <img src="app/src/main/res/drawable/img_1.png" alt="Home Screen" width="220"/>
+  <img src="app/src/main/res/drawable/img_2.png" alt="Details Screen" width="220"/>
+  <img src="app/src/main/res/drawable/img_3.png" alt="Wishlist Screen" width="220"/>
+  <img src="app/src/main/res/drawable/img_4.png" alt="Wishlist Screen" width="220"/>
+  <img src="app/src/main/res/drawable/img_5.png" alt="Wishlist Screen" width="220"/>
+  <img src="app/src/main/res/drawable/img_5.png" alt="Wishlist Screen" width="220"/>
+</div>
+
 
 ---
 
